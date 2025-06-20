@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ascent Noir - Parkour Game</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #00bfff;
+            --secondary-blue: #0096ff;
+            --accent-cyan: #00ffff;
+            --dark-bg: #0a0a0a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --neon-glow: 0 0 20px rgba(0, 191, 255, 0.5);
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: 
+                linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)),
+                url('background.png') center/cover no-repeat fixed;
+            color: white;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('background.png') center/cover no-repeat fixed;
+            filter: blur(3px);
+            z-index: -2;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 30% 40%, rgba(0, 191, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+                linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(10, 10, 10, 0.8) 100%);
+            z-index: -1;
+        }
+
+        /* Enhanced Animated Background Grid */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 191, 255, 0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 191, 255, 0.15) 1px, transparent 1px),
+                radial-gradient(circle at 50% 50%, rgba(0, 255, 255, 0.1) 2px, transparent 2px);
+            background-size: 60px 60px, 60px 60px, 120px 120px;
+            animation: gridMove 25s linear infinite, gridPulse 8s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.8;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(60px, 60px); }
+        }
+
+        @keyframes gridPulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 0.4; }
+        }
+
+        /* Enhanced Hero Section with Dynamic Background */
+        .hero {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(0, 191, 255, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 255, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(135, 206, 235, 0.1) 0%, transparent 60%),
+                linear-gradient(135deg, rgba(15, 52, 96, 0.4) 0%, rgba(22, 83, 126, 0.6) 100%);
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="0.5" fill="rgba(255,255,255,0.15)"/><circle cx="20" cy="20" r="0.3" fill="rgba(0,191,255,0.3)"/><circle cx="80" cy="80" r="0.4" fill="rgba(0,255,255,0.2)"/><circle cx="60" cy="30" r="0.2" fill="rgba(135,206,235,0.25)"/><circle cx="30" cy="70" r="0.6" fill="rgba(0,191,255,0.1)"/></svg>') repeat;
+            animation: cosmicFloat 35s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(45deg, transparent 40%, rgba(0, 191, 255, 0.05) 50%, transparent 60%),
+                linear-gradient(-45deg, transparent 40%, rgba(0, 255, 255, 0.03) 50%, transparent 60%);
+            animation: lightSweep 12s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        @keyframes lightSweep {
+            0%, 100% { transform: translateX(-100%) translateY(-100%); }
+            50% { transform: translateX(100%) translateY(100%); }
+        }
+
+        @keyframes cosmicFloat {
+            0%, 100% { transform: rotate(0deg) translateY(0px); }
+            33% { transform: rotate(120deg) translateY(-30px); }
+            66% { transform: rotate(240deg) translateY(30px); }
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+            animation: heroEntrance 2s ease-out;
+            position: relative;
+        }
+
+        @keyframes heroEntrance {
+            0% {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .hero-image {
+            width: 100%;
+            max-width: 900px;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 25px;
+            box-shadow: 
+                0 25px 50px rgba(0, 100, 255, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            margin-bottom: 40px;
+            animation: floatingGlow 4s ease-in-out infinite;
+            border: 2px solid rgba(0, 191, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-image::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        @keyframes floatingGlow {
+            0%, 100% { 
+                transform: translateY(0px) scale(1);
+                box-shadow: 0 25px 50px rgba(0, 100, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            }
+            50% { 
+                transform: translateY(-10px) scale(1.02);
+                box-shadow: 0 35px 70px rgba(0, 150, 255, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            }
+        }
+
+        .game-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00bfff 0%, #ffffff 25%, #00ffff 50%, #ffffff 75%, #00bfff 100%);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            animation: titleAnimation 3s ease-in-out infinite, gradientShift 8s ease-in-out infinite;
+            letter-spacing: 8px;
+            text-shadow: 0 0 30px rgba(0, 191, 255, 0.5);
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes titleAnimation {
+            0%, 100% { 
+                filter: drop-shadow(0 0 10px rgba(0, 191, 255, 0.5));
+                transform: scale(1);
+            }
+            50% { 
+                filter: drop-shadow(0 0 30px rgba(0, 255, 255, 0.8));
+                transform: scale(1.05);
+            }
+        }
+
+        /* Enhanced Sections */
+        .section {
+            padding: 100px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 60px;
+            background: linear-gradient(45deg, var(--primary-blue), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            animation: titlePulse 2s ease-in-out infinite;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary-blue), transparent);
+            animation: lineGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes titlePulse {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(0, 191, 255, 0.3)); }
+            50% { filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.6)); }
+        }
+
+        @keyframes lineGlow {
+            0%, 100% { box-shadow: var(--neon-glow); }
+            50% { box-shadow: 0 0 30px rgba(0, 255, 255, 0.8); }
+        }
+
+        .about-content {
+            font-size: 1.4rem;
+            line-height: 2;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 50px;
+            border-radius: 25px;
+            backdrop-filter: blur(25px) saturate(1.5);
+            border: 1px solid rgba(0, 191, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .about-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 191, 255, 0.1), transparent);
+            animation: scanLine 6s ease-in-out infinite;
+        }
+
+        .about-content::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.05) 0%, transparent 70%);
+            animation: rotateGlow 15s linear infinite;
+        }
+
+        @keyframes scanLine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Enhanced Credit Cards */
+        .credits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .credit-card {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            backdrop-filter: blur(25px) saturate(1.5);
+            border: 1px solid rgba(0, 191, 255, 0.25);
+            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .credit-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(135deg, rgba(0, 191, 255, 0.15), rgba(0, 255, 255, 0.08)),
+                radial-gradient(circle at 50% 50%, rgba(135, 206, 235, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .credit-card:hover::before {
+            opacity: 1;
+        }
+
+        .credit-card:hover {
+            transform: translateY(-20px) scale(1.08);
+            box-shadow: 
+                0 35px 70px rgba(0, 191, 255, 0.5),
+                0 0 40px rgba(0, 255, 255, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border-color: var(--accent-cyan);
+        }
+
+        .credit-name {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
+            transition: color 0.3s ease;
+        }
+
+        .credit-card:hover .credit-name {
+            color: var(--accent-cyan);
+        }
+
+        .credit-role {
+            color: #87ceeb;
+            font-size: 1.2rem;
+            position: relative;
+            z-index: 2;
+            font-weight: 300;
+        }
+
+        /* Enhanced Links Section with Advanced Effects */
+        .links-section {
+            text-align: center;
+            background: 
+                linear-gradient(135deg, rgba(0, 191, 255, 0.15), rgba(0, 255, 255, 0.08)),
+                rgba(255, 255, 255, 0.08);
+            padding: 80px 40px;
+            margin-top: 60px;
+            border-radius: 30px;
+            backdrop-filter: blur(25px) saturate(1.5);
+            border: 1px solid rgba(0, 191, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .links-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle, rgba(0, 191, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle, rgba(0, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotateGlow 12s linear infinite;
+        }
+
+        .links-section::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(45deg, transparent 48%, rgba(255, 255, 255, 0.05) 50%, transparent 52%),
+                linear-gradient(-45deg, transparent 48%, rgba(0, 191, 255, 0.05) 50%, transparent 52%);
+            animation: crossSweep 8s ease-in-out infinite;
+        }
+
+        @keyframes crossSweep {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+        }
+
+        @keyframes rotateGlow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .game-link {
+            display: inline-block;
+            background: 
+                linear-gradient(135deg, var(--primary-blue), var(--secondary-blue)),
+                linear-gradient(45deg, rgba(255, 255, 255, 0.1), transparent);
+            color: white;
+            padding: 22px 45px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 15px;
+            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 
+                0 15px 35px rgba(0, 191, 255, 0.4),
+                inset 0 2px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 2;
+            overflow: hidden;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+
+        .game-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .game-link::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            transition: all 0.5s ease;
+        }
+
+        .game-link:hover::before {
+            left: 100%;
+        }
+
+        .game-link:hover::after {
+            width: 200px;
+            height: 200px;
+        }
+
+        .game-link:hover {
+            transform: translateY(-8px) scale(1.08);
+            box-shadow: 
+                0 25px 50px rgba(0, 191, 255, 0.6),
+                0 0 40px rgba(0, 255, 255, 0.5),
+                inset 0 2px 0 rgba(255, 255, 255, 0.4);
+            background: 
+                linear-gradient(135deg, var(--secondary-blue), var(--accent-cyan)),
+                linear-gradient(45deg, rgba(255, 255, 255, 0.2), transparent);
+            border-color: var(--accent-cyan);
+        }
+
+        /* Enhanced Particles with More Variety */
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: particleFloat 25s infinite linear;
+        }
+
+        .particle.small {
+            width: 3px;
+            height: 3px;
+            background: rgba(0, 191, 255, 0.7);
+            box-shadow: 0 0 6px rgba(0, 191, 255, 0.5);
+        }
+
+        .particle.medium {
+            width: 6px;
+            height: 6px;
+            background: rgba(0, 255, 255, 0.5);
+            box-shadow: 0 0 12px rgba(0, 255, 255, 0.4);
+        }
+
+        .particle.large {
+            width: 10px;
+            height: 10px;
+            background: rgba(135, 206, 235, 0.4);
+            box-shadow: 0 0 20px rgba(135, 206, 235, 0.3);
+        }
+
+        .particle.glow {
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, rgba(0, 191, 255, 0.8) 0%, rgba(0, 255, 255, 0.4) 50%, transparent 100%);
+            animation: particleFloat 20s infinite linear, particleGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes particleGlow {
+            0%, 100% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.5); filter: brightness(1.5); }
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) translateX(0px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(50px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Scroll Indicators */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--primary-blue);
+            animation: bounce 2s infinite;
+            font-size: 2rem;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            40% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+            60% {
+                transform: translateX(-50%) translateY(-5px);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .game-title {
+                font-size: 3rem;
+                letter-spacing: 4px;
+            }
+            
+            .hero-image {
+                height: 300px;
+                max-width: 95%;
+            }
+            
+            .section-title {
+                font-size: 2.2rem;
+            }
+            
+            .about-content {
+                font-size: 1.2rem;
+                padding: 30px;
+            }
+
+            .credits-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+
+            .credit-card {
+                padding: 30px;
+            }
+        }
+
+        /* Intersection Observer Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.8s ease-out;
+        }
+
+        .slide-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 0.8s ease-out;
+        }
+
+        .slide-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+    <div class="floating-particles" id="particles"></div>
+
+    <audio id="bgmusic" autoplay loop>
+    <source src="maintheme.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+    const audio = document.getElementById('bgmusic');
+
+    // Restore saved time
+    audio.currentTime = localStorage.getItem('musicTime') || 0;
+    audio.volume = 0.2;
+
+    // Update time periodically
+    setInterval(() => {
+        localStorage.setItem('musicTime', audio.currentTime);
+    }, 1000);
+</script>
+
+    
+    <section class="hero">
+        <div class="hero-content">
+            <img src="banner.png" alt="Ascent Noir Logo" class="hero-image" id="heroImage">
+            <h1 class="game-title">ASCENT NOIR</h1>
+            <div class="scroll-indicator">▼</div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title slide-left">About the Game</h2>
+        <div class="about-content slide-right">
+            <p>Ascent Noir is a Roblox parkour game inspired by Mirror's Edge, among others like Dying Light 2.</p>
+            <p>Experience the freedom of movement in a cyberpunk metropolis called Ascent, set in 3025.</p>
+            <p>Master parkour as you go through big skyscrapers and uncover the mysteries of this futuristic world.</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2 class="section-title slide-left">Development Team</h2>
+        <div class="credits-grid">
+            <div class="credit-card fade-in">
+                <div class="credit-name">@DairyDawn533056</div>
+                <div class="credit-role">Animator, Modeler</div>
+            </div>
+            <div class="credit-card fade-in">
+                <div class="credit-name">@SimplyDaviiz</div>
+                <div class="credit-role">Scripter, UI Designer</div>
+            </div>
+            <div class="credit-card fade-in">
+                <div class="credit-name">@Bernardoinfo</div>
+                <div class="credit-role">Modeler, Environment Artist, Owner, Trailer Maker</div>
+            </div>
+            <div class="credit-card fade-in">
+                <div class="credit-name">@Rato_Jojo1</div>
+                <div class="credit-role">Trailer Maker, Modeler, Scripter</div>
+            </div>
+            <div class="credit-card fade-in">
+                <div class="credit-name">@hsuosts</div>
+                <div class="credit-role">Designer</div>
+            </div>
+            <div class="credit-card fade-in">
+                <div class="credit-name">@YasminC7</div>
+                <div class="credit-role">Designer, Artist</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="links-section fade-in">
+        <h2 class="section-title">Enter the Game</h2>
+        <a href="https://www.roblox.com/communities/35277968/An-Ascent-Studios#!/about" class="game-link" target="_blank">
+            ✦ An Ascent Studios - Roblox
+        </a>
+        <br>
+        <a href="https://www.roblox.com/games/123368294754191/Ascent-Noir-Alpha" class="game-link" target="_blank">
+            ✦ Ascent Noir {Alpha} - Roblox
+        </a>
+        <a href="https://discord.gg/hmKfD2C4xG" class="game-link" target="_blank">
+            ✦ An Ascent Studios - Discord
+        </a>
+    </section>
+
+    <script>
+        class ParticleSystem {
+            constructor() {
+                this.container = document.getElementById('particles');
+                this.particles = [];
+                this.particleCount = 100;
+            }
+
+            createParticle() {
+                const particle = document.createElement('div');
+                const size = Math.random();
+                const glowChance = Math.random();
+                
+                if (glowChance < 0.1) {
+                    particle.className = 'particle glow';
+                } else if (size < 0.5) {
+                    particle.className = 'particle small';
+                } else if (size < 0.8) {
+                    particle.className = 'particle medium';
+                } else {
+                    particle.className = 'particle large';
+                }
+
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 25 + 's';
+                particle.style.animationDuration = (Math.random() * 20 + 20) + 's';
+                
+                // Add random horizontal drift
+                const drift = (Math.random() - 0.5) * 100;
+                particle.style.setProperty('--drift', drift + 'px');
+                
+                this.container.appendChild(particle);
+                this.particles.push(particle);
+            }
+
+            init() {
+                for (let i = 0; i < this.particleCount; i++) {
+                    this.createParticle();
+                }
+            }
+        }
+
+        class ScrollAnimations {
+            constructor() {
+                this.elements = document.querySelectorAll('.fade-in, .slide-left, .slide-right');
+                this.observer = new IntersectionObserver(this.handleIntersection.bind(this), {
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -50px 0px'
+                });
+            }
+
+            handleIntersection(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }
+
+            init() {
+                this.elements.forEach(element => {
+                    this.observer.observe(element);
+                });
+            }
+        }
+
+        class MouseEffects {
+            constructor() {
+                this.hero = document.querySelector('.hero');
+                this.heroContent = document.querySelector('.hero-content');
+            }
+
+            init() {
+                this.hero.addEventListener('mousemove', (e) => {
+                    const rect = this.hero.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const moveX = (x / rect.width - 0.5) * 20;
+                    const moveY = (y / rect.height - 0.5) * 20;
+                    
+                    this.heroContent.style.transform = `translate(${moveX}px, ${moveY}px)`;
+                });
+
+                this.hero.addEventListener('mouseleave', () => {
+                    this.heroContent.style.transform = 'translate(0, 0)';
+                });
+            }
+        }
+
+        class SmoothScroll {
+            constructor() {
+                this.links = document.querySelectorAll('a[href^="#"]');
+            }
+
+            init() {
+                this.links.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const target = document.querySelector(link.getAttribute('href'));
+                        if (target) {
+                            target.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    });
+                });
+            }
+        }
+
+        // Initialize all systems
+        document.addEventListener('DOMContentLoaded', () => {
+            const particleSystem = new ParticleSystem();
+            const scrollAnimations = new ScrollAnimations();
+            const mouseEffects = new MouseEffects();
+            const smoothScroll = new SmoothScroll();
+
+            particleSystem.init();
+            scrollAnimations.init();
+            mouseEffects.init();
+            smoothScroll.init();
+
+            // Hero image error handling
+            const heroImage = document.getElementById('heroImage');
+            heroImage.onerror = function() {
+                this.style.display = 'none';
+            };
+        });
+
+        // Function to update hero image (maintaining compatibility)
+        function updateHeroImage(imageSrc) {
+            const heroImage = document.getElementById('heroImage');
+            heroImage.src = imageSrc;
+        }
+
+        // Add performance optimization
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(() => {
+                // Add additional particle effects during idle time
+                const additionalParticles = 20;
+                const particlesContainer = document.getElementById('particles');
+                
+                for (let i = 0; i < additionalParticles; i++) {
+                    setTimeout(() => {
+                        const particle = document.createElement('div');
+                        particle.className = 'particle small';
+                        particle.style.left = Math.random() * 100 + '%';
+                        particle.style.animationDelay = Math.random() * 20 + 's';
+                        particle.style.animationDuration = (Math.random() * 10 + 20) + 's';
+                        particlesContainer.appendChild(particle);
+                    }, i * 100);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
