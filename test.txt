@@ -1,0 +1,3 @@
+ <audio id="bgmusic" loop>
+  <source src="maintheme.mp3" type="audio/mpeg">
+</audio>
