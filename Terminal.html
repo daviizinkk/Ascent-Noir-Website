@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Noir.os Terminal</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="terminal-shell">
+      <header class="topbar">
+        <div>
+          <strong>Noir.os</strong>
+          <span>Noir.os Terminal</span>
+        </div>
+        <nav>
+          <button id="themeButton" type="button">theme</button>
+          <button id="clearButton" type="button">clear</button>
+        </nav>
+      </header>
+
+      <section class="login-panel" id="loginPanel" aria-label="Noir.os login">
+        <form class="login-card" id="loginForm" autocomplete="off">
+          <h1>Noir.os Login</h1>
+          <label>
+            Username
+            <input id="usernameInput" name="username" spellcheck="false" autofocus>
+          </label>
+          <label>
+            Password
+            <input id="passwordInput" name="password" type="password">
+          </label>
+          <p class="login-error" id="loginError" role="alert"></p>
+          <button type="submit">Sign in</button>
+        </form>
+      </section>
+
+      <section class="terminal is-hidden" id="terminal" aria-label="Terminal Noir.os">
+        <div class="output" id="output"></div>
+        <form class="prompt-line" id="promptForm" autocomplete="off">
+          <span class="prompt" id="prompt">PS Noir:\Users\Noir&gt;</span>
+          <input id="commandInput" spellcheck="false">
+        </form>
+      </section>
+    </main>
+
+    <script src="commands.js"></script>
+    <script src="terminal.js"></script>
+  </body>
+</html>

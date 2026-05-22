@@ -1,0 +1,263 @@
+:root {
+  --panel: #012456;
+  --panel-strong: #012456;
+  --chrome: #f0f0f0;
+  --chrome-text: #111111;
+  --text: #eeeeee;
+  --muted: #c7d7f2;
+  --danger: #ff7777;
+  --ok: #7cff9b;
+  --border: #b7b7b7;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  font-family: Consolas, "Cascadia Code", "Courier New", monospace;
+  background: #1f1f1f;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  color: var(--chrome-text);
+  background: #e5e5e5;
+  border: 1px solid #9d9d9d;
+  border-radius: 0;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.terminal-shell {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  width: min(1180px, calc(100vw - 24px));
+  height: calc(100vh - 24px);
+  margin: 12px auto;
+  border: 1px solid var(--border);
+  box-shadow: 0 18px 70px rgba(0, 0, 0, 0.42);
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  min-height: 34px;
+  padding: 4px 8px;
+  color: var(--chrome-text);
+  background: var(--chrome);
+  border-bottom: 1px solid var(--border);
+}
+
+.topbar div {
+  display: grid;
+  gap: 1px;
+}
+
+.topbar span {
+  color: #444444;
+  font-size: 12px;
+}
+
+.topbar nav {
+  display: flex;
+  gap: 6px;
+}
+
+.terminal,
+.login-panel {
+  display: grid;
+  min-height: 0;
+  padding: 8px;
+  background: var(--panel);
+}
+
+.terminal {
+  grid-template-rows: 1fr auto;
+}
+
+.login-panel {
+  place-items: center;
+}
+
+.is-hidden {
+  display: none;
+}
+
+.login-card {
+  display: grid;
+  gap: 12px;
+  width: min(420px, calc(100vw - 48px));
+  padding: 22px;
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.login-card h1 {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.login-card label {
+  display: grid;
+  gap: 5px;
+}
+
+.login-card input {
+  min-height: 30px;
+  padding: 4px 7px;
+  color: #111111;
+  background: #ffffff;
+  border: 1px solid #9d9d9d;
+}
+
+.login-card button {
+  justify-self: start;
+}
+
+.login-error {
+  min-height: 20px;
+  margin: 0;
+  color: var(--danger);
+}
+
+.output {
+  min-height: 0;
+  overflow: auto;
+  padding-right: 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.42;
+}
+
+.line {
+  margin: 0 0 2px;
+}
+
+.line.command {
+  color: var(--text);
+}
+
+.line.error {
+  color: var(--danger);
+}
+
+.line.ok {
+  color: var(--ok);
+}
+
+.line.muted {
+  color: var(--muted);
+}
+
+.prompt-line {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  padding: 0;
+  background: var(--panel-strong);
+}
+
+.prompt {
+  color: var(--text);
+  white-space: nowrap;
+}
+
+input {
+  min-width: 0;
+  color: var(--text);
+  background: transparent;
+  border: 0;
+  outline: 0;
+}
+
+.terminal-image {
+  margin: 8px 0;
+}
+
+.terminal-image img {
+  display: block;
+  max-width: min(420px, 100%);
+  max-height: 260px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: #ffffff;
+  object-fit: contain;
+}
+
+.terminal-image.image-fallback {
+  display: grid;
+  gap: 8px;
+  max-width: min(620px, 100%);
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+.terminal-image iframe {
+  width: 100%;
+  height: 260px;
+  background: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.terminal-image a,
+.link-line a {
+  color: #ffff00;
+}
+
+.light .terminal-image a,
+.light .link-line a {
+  color: #005cc5;
+}
+
+.light {
+  --panel: #ffffff;
+  --panel-strong: #ffffff;
+  --chrome: #f0f0f0;
+  --chrome-text: #111111;
+  --text: #111111;
+  --muted: #555555;
+  --border: #a9a9a9;
+  background: #dadada;
+}
+
+@media (max-width: 760px) {
+  .terminal-shell {
+    width: calc(100vw - 8px);
+    height: calc(100vh - 8px);
+    margin: 4px auto;
+  }
+
+  .topbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .topbar nav {
+    width: 100%;
+  }
+
+  .topbar button {
+    flex: 1;
+  }
+
+  .prompt-line {
+    grid-template-columns: 1fr;
+  }
+
+  .prompt {
+    white-space: normal;
+  }
+}
